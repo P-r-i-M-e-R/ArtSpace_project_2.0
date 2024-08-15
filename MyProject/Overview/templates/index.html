@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="art, artspace">
+        <meta name="descripton" content="Place for new art">
+        <title>ArtSpace Overview</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+    </head>
+    <body>
+        <header>
+            <div class="logo">ArtSpace</div>
+            <div class="nav">
+                <div class="search-container">
+                    <input type="search" placeholder="Поиск">
+                </div>
+                <div class="auth-buttons">
+                    <button class="login-btn">Вход</button>
+                    <button class="register-btn">Регистрация</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="page-nav">
+            <button>Обзор</button>
+            <button>Ресурсы</button>
+            <button>Вакансии</button>
+            <button>Найти исполнителя</button>
+        </nav>
+
+        <main>
+            <section class="filters">
+                <button class="filter-btn">Фильтр</button>
+                <div id="category-buttons" class="category-buttons">
+
+                </div>
+            </section>
+
+            <section class="content">
+                <div id="image-grid" class="image-grid">
+
+                </div>
+            </section>
+
+            <footer>
+                <button>Последнее</button>
+                <button>Комьюнити</button>
+                <button>Тренды</button>
+            </footer>
+        </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Fetch categories
+                fetch('/api/categories')
+                    .then(response => response.json())
+                    .then(categories => {
+                        const categoryButtons = document.getElementById('category-buttons');
+                        categories.forEach(category => {
+                            const button = document.createElement('button');
+                            button.textContent = category.name;
+                            categoryButtons.appendChild(button);
+                        });
+                    });
+    
+                // Fetch posts
+                fetch('/api/posts')
+                    .then(response => response.json())
+                    .then(posts => {
+                        const imageGrid = document.getElementById('image-grid');
+                        posts.forEach(post => {
+                            const gridItem = document.createElement('div');
+                            gridItem.className = 'grid-item';
+    
+                            const img = document.createElement('img');
+                            img.src = post.image_url;
+                            img.alt = post.title;
+    
+                            const details = document.createElement('div');
+                            details.className = 'item-details';
+    
+                            const h3 = document.createElement('h3');
+                            h3.textContent = post.author_name;
+    
+                            const p = document.createElement('p');
+                            p.textContent = post.category;
+    
+                            details.appendChild(h3);
+                            details.appendChild(p);
+                            gridItem.appendChild(img);
+                            gridItem.appendChild(details);
+                            imageGrid.appendChild(gridItem);
+                        });
+                    });
+            });
+        </script>
+    </body>
+</html>

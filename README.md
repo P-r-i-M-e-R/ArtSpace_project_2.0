@@ -31,7 +31,7 @@
   <p align="center">
     README file for ArtSpace project
     <br />
-    <a href="http://127.0.0.1:5500/index.html"><strong>View the website »</strong></a>
+    <a href="http://127.0.0.1:8000/Overview/"><strong>View the website »</strong></a>
     <br />
     <br />
     <a href="https://github.com/P-r-i-M-e-R/ArtSpace_project_2.0">Check docs</a>
