@@ -34,7 +34,7 @@
             <section class="filters">
                 <button class="filter-btn">Фильтр</button>
                 <div id="category-buttons" class="category-buttons">
-
+                    
                 </div>
             </section>
 
@@ -53,8 +53,8 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Fetch categories
-                fetch('/api/categories')
+                // Получение категорий
+                fetch('/api/categories/')
                     .then(response => response.json())
                     .then(categories => {
                         const categoryButtons = document.getElementById('category-buttons');
@@ -65,8 +65,8 @@
                         });
                     });
     
-                // Fetch posts
-                fetch('/api/posts')
+                // Получение постов
+                fetch('/api/posts/')
                     .then(response => response.json())
                     .then(posts => {
                         const imageGrid = document.getElementById('image-grid');
@@ -75,7 +75,7 @@
                             gridItem.className = 'grid-item';
     
                             const img = document.createElement('img');
-                            img.src = post.image_url;
+                            img.src = post.image;
                             img.alt = post.title;
     
                             const details = document.createElement('div');
