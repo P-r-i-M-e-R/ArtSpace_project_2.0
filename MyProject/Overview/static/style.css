@@ -14,9 +14,14 @@ button, input {
 header {
     display: flex;
     align-items: center;
+    margin: 0px 20px;
+    margin-top: 20px;
+    margin-bottom: 5px;
     padding: 10px 20px;
-    background-color: #0a0a0d;
     position: relative;
+    border: 2px solid rgba(0, 0, 0, 0);
+    box-shadow: 0px 0px 10px 10px rgba(0,0,0,0.5);
+    border-radius: 6px;
 }
 
 .logo {
@@ -44,7 +49,7 @@ header {
     padding: 5px 10px;
     border-radius: 11px;
     border: 2px solid #909090;
-    background-color: #0a0a0d;
+    background-color: transparent;
     color: #fff;
 }
 
@@ -76,7 +81,6 @@ header {
 .page-nav {
     display: flex;
     justify-content: center;
-    background-color: #0f0f14;
     padding: 10px 20px;
 }
 
@@ -135,8 +139,8 @@ header {
 
 .image-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
 }
 
 .grid-item {
