@@ -42,15 +42,40 @@ header {
     display: flex;
     justify-content: center;
     max-width: 550px;
+    position: relative;
 }
 
 .nav input[type="search"] {
     width: 100%;
     padding: 5px 10px;
+    padding-left: 40px;
     border-radius: 11px;
     border: 2px solid #909090;
     background-color: transparent;
     color: #fff;
+}
+
+.search-container::before {
+    content: '';
+    position: absolute;
+    left: 21px; 
+    top: calc(50% - 2px);
+    width: 9px; 
+    height: 9px;
+    border: 2px solid #909090; 
+    border-radius: 50%; 
+    transform: translateY(-50%);
+}
+
+.search-container::after {
+    content: '';
+    position: absolute;
+    left: 15px; 
+    top: calc(50% + 4px); 
+    width: 9px;
+    height: 2px;
+    background-color: #909090; 
+    transform: rotate(-45deg); 
 }
 
 .auth-buttons {
@@ -67,7 +92,7 @@ header {
 }
 
 .login-btn {
-    background-color: #0a0a0d;
+    background-color: transparent;
     color: #fff;
     border: 2px solid #ffffff;
 }
@@ -88,9 +113,51 @@ header {
     background: none;
     border: none;
     color: #909090;
-    margin-right: 20px;
+    margin-right: 12px;
     cursor: pointer;
     font-size: 16px;
+    position: relative;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center; 
+}
+
+.arrow-down {
+    width: 7px; 
+    height: 7px; 
+    border-left: 1px solid #909090; 
+    border-bottom: 1px solid #909090; 
+    transform: rotate(-45deg); 
+    margin-left: 5px; 
+}
+
+
+.page-nav button:hover,
+.page-nav button.current-page {
+    color: #ffffff;
+}
+
+
+.page-nav button:hover .arrow-down,
+.page-nav button.current-page .arrow-down {
+    border-color: #ffffff;
+}
+
+.page-nav button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 2px;
+    background-color: #ffffff;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.page-nav button:hover::after,
+.page-nav button.current-page::after {
+    transform: scaleX(1);
 }
 
 .filters {
@@ -108,6 +175,17 @@ header {
     cursor: pointer;
     border-radius: 5px;
     margin-right: 20px;
+    display: inline-flex;
+    align-items: center; 
+}
+
+.filter-arrow-down {
+    width: 7px; 
+    height: 7px; 
+    border-left: 1px solid #000; 
+    border-bottom: 1px solid #000; 
+    transform: rotate(-45deg); 
+    margin-left: 5px;
 }
 
 .category-buttons {
@@ -144,34 +222,71 @@ header {
 }
 
 .grid-item {
-    background-color: #292933;
-    padding: 20px;
+    position: relative; 
     border-radius: 10px;
-    text-align: center;
+    overflow: hidden; 
+    cursor: pointer;
 }
 
 .grid-item img {
-    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
     border-radius: 10px;
 }
 
 .item-details {
-    margin-top: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный фон */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.grid-item:hover .item-details {
+    opacity: 1; /* Показываем информацию при наведении */
+}
+
+.item-details h3, .item-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    text-align: center;
 }
 
 footer {
     display: flex;
     justify-content: center;
-    padding: 20px;
-    background-color: #0f0f14;
+    align-items: center;
+    padding: 20px 0;
+    background-color: #fed905; /* Жёлтый фон */
+    border-radius: 30px; /* Закругленные углы для создания овала */
+    margin: 20px auto; /* Центрируем footer на странице */
+    width: 50%; /* Ограничиваем ширину */
+    max-width: 450px; /* Максимальная ширина овала */
 }
 
 footer button {
-    background-color: #fed905;
-    padding: 10px 20px;
+    background: none;
     border: none;
-    color: #000;
-    cursor: pointer;
-    border-radius: 5px;
+    padding: 10px 20px;
     margin: 0 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #000;
+    border-radius: 20px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+footer button:hover {
+    background-color: #191923;
+    color: #fff;
 }

@@ -17,3 +17,10 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Post_preview(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_previews')
+    image = models.ImageField(upload_to='post_previews/', blank=False)
+
+    def __str__(self):
+        return self.post.title

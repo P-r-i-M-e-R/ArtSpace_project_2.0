@@ -24,15 +24,15 @@
         </header>
 
         <nav class="page-nav">
-            <button>Обзор</button>
-            <button>Ресурсы</button>
-            <button>Вакансии</button>
-            <button>Найти исполнителя</button>
+            <button class="{% if request.path == '/' %}current-page{% endif %}">Обзор<span class="arrow-down"></span></button>
+            <button class="{% if request.path == '/resources/' %}current-page{% endif %}">Ресурсы<span class="arrow-down"></span></button>
+            <button class="{% if request.path == '/jobs/' %}current-page{% endif %}">Вакансии</button>
+            <button class="{% if request.path == '/find/' %}current-page{% endif %}">Найти исполнителя</button>
         </nav>
 
         <main>
             <section class="filters">
-                <button class="filter-btn">Фильтр</button>
+                <button class="filter-btn">Фильтр<span class="filter-arrow-down"></span></button>
                 <div id="category-buttons" class="category-buttons">
                     
                 </div>
@@ -43,6 +43,8 @@
 
                 </div>
             </section>
+
+            <img src='/media/post_images/i1561481653046294.jpeg'>
 
             <footer>
                 <button>Последнее</button>
@@ -64,7 +66,7 @@
                             categoryButtons.appendChild(button);
                         });
                     });
-    
+        
                 // Получение постов
                 fetch('/api/posts/')
                     .then(response => response.json())
@@ -73,20 +75,20 @@
                         posts.forEach(post => {
                             const gridItem = document.createElement('div');
                             gridItem.className = 'grid-item';
-    
+        
                             const img = document.createElement('img');
                             img.src = post.image;
                             img.alt = post.title;
-    
+        
                             const details = document.createElement('div');
                             details.className = 'item-details';
-    
+        
                             const h3 = document.createElement('h3');
-                            h3.textContent = post.author_name;
-    
+                            h3.textContent = 'Автор: ' + post.author_name;
+        
                             const p = document.createElement('p');
-                            p.textContent = post.category;
-    
+                            p.textContent = 'Категория: ' + post.category;
+        
                             details.appendChild(h3);
                             details.appendChild(p);
                             gridItem.appendChild(img);
