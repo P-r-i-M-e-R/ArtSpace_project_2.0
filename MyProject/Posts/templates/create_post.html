@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="art, artspace">
+        <meta name="descripton" content="Place for new art">
+        <title>ArtSpace Create_post</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    </head>
+
+    <body>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div>
+                <label for="image">Загрузить картинку:</label>
+                <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                <img id="image-preview" style="max-width: 100%;" />
+            </div>
+            <button type="submit">Создать пост</button>
+        </form>     
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+        <script>
+            let cropper;
+            const previewImage = (event) => {
+                const image = document.getElementById('image-preview');
+                image.src = URL.createObjectURL(event.target.files[0]);
+                if (cropper) {
+                    cropper.destroy();
+                }
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,  // Соотношение сторон 1:1 для аватара
+                    viewMode: 1
+                });
+            };
+
+            document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const imageFile = document.getElementById('image').files[0];
+
+            formData.append('image', imageFile);
+
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                formData.append('image_thumbnail', blob, 'image_thumbnail.jpg');
+                formData.append('title', document.querySelector('[name="title"]').value);
+                formData.append('author', document.querySelector('[name="author"]').value);
+                formData.append('style', document.querySelector('[name="style"]').value);
+                formData.append('type', document.querySelector('[name="type"]').value);
+                formData.append('category', document.querySelector('[name="category"]').value);
+
+                fetch('{% url "creation" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "{% url 'creation' %}";
+                    } else {
+                        return response.json().then(data => {
+                            console.error("Ошибка:", data);
+                            alert("Ошибка создания поста: " + data.detail || "Попробуйте снова.");
+                        });
+                    }
+                }).catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("Произошла ошибка при отправке формы.");
+                });
+            });
+        });
+        </script>
+    </body>
+</html>

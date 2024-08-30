@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="art, artspace">
+        <meta name="descripton" content="Place for new art">
+        <title>ArtSpace Overview</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+    </head>
+    <body>
+        <header>
+            <div class="logo">ArtSpace</div>
+            <div class="nav">
+                <div class="search-container">
+                    <input type="search" id="search-input" class="search-input" placeholder="Поиск">
+                    <button type="button" id="clear-btn" class="clear-btn">&times;</button>
+                </div>
+
+                <div class="auth-buttons">
+                    <button class="login-btn">Вход</button>
+                    <a href="{% url 'register' %}">
+                        <button class="register-btn">Регистрация</button>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <nav class="page-nav">
+            <button class="{% if request.path == '/' %}current-page{% endif %}">Обзор<span class="arrow-down"></span></button>
+            <button class="{% if request.path == '/resources/' %}current-page{% endif %}">Ресурсы<span class="arrow-down"></span></button>
+            <button class="{% if request.path == '/jobs/' %}current-page{% endif %}">Вакансии</button>
+            <button class="{% if request.path == '/find/' %}current-page{% endif %}">Найти исполнителя</button>
+        </nav>
+
+        <main>
+            <section class="filters">
+                <button class="filter-btn" id="filter-btn">Фильтр<span class="filter-arrow-down"></span></button>
+                <div id="filter-content" class="filter-content">
+                    
+                </div>
+
+                <button class="scroll-btn" id="scroll-left">&lt;</button>
+                <div id="style-buttons" class="style-buttons">
+
+                </div>
+                <button class="scroll-btn" id="scroll-right">&gt;</button>
+            </section>
+
+            <section class="content">
+                <div id="image-grid" class="image-grid">
+
+                </div>
+            </section>
+
+            <img src="/media/posts/thumbnails/image_thumbnail_WmV6QoV.jpg">
+
+            <footer>
+                <button>Последнее</button>
+                <button>Комьюнити</button>
+                <button>Тренды</button>
+            </footer>
+
+            <a class="back-to-top" id="back-to-top">
+                <span class="arrow-up"></span>
+            </a>
+            
+        </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Получение типов постов
+                fetch('/api/types/')
+                    .then(response => response.json())
+                    .then(types => {
+                        const filterContent = document.getElementById('filter-content');
+                        types.forEach(type => {
+                            const label = document.createElement('label');
+                            label.textContent = type.type_name;
+        
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.name = 'type';
+                            checkbox.value = type.type_name;
+        
+                            label.prepend(checkbox);
+                            filterContent.appendChild(label);
+                        });
+                    });
+        
+                // Получение стилей
+                fetch('/api/styles/')
+                    .then(response => response.json())
+                    .then(styles => {
+                        const styleButtons = document.getElementById('style-buttons');
+                        styles.forEach(style => {
+                            const container = document.createElement('div');
+                            container.className = 'style-button-container';
+
+                            const prev = document.createElement('img');
+                            prev.src = style.preview;
+
+                            const button = document.createElement('button');
+                            button.textContent = style.style_name;
+
+                            container.appendChild(prev);
+                            container.appendChild(button);
+                            styleButtons.appendChild(container);
+                        });
+                    });
+            
+                // Получение постов
+                fetch('/api/posts/')
+                    .then(response => response.json())
+                    .then(posts => {
+                        const imageGrid = document.getElementById('image-grid');
+                        posts.forEach(post => {
+                            const gridItem = document.createElement('div');
+                            gridItem.className = 'grid-item';
+            
+                            const img = document.createElement('img');
+                            img.src = post.image_thumbnail;
+                            img.alt = post.title;
+            
+                            const details = document.createElement('div');
+                            details.className = 'item-details';
+            
+                            const h3 = document.createElement('h3');
+                            h3.textContent = post.author;
+            
+                            const p = document.createElement('p');
+                            p.textContent = post.job;
+            
+                            details.appendChild(h3);
+                            details.appendChild(p);
+                            gridItem.appendChild(img);
+                            gridItem.appendChild(details);
+                            imageGrid.appendChild(gridItem);
+                        });
+                    });
+        
+                // Обработка клика по кнопке фильтра
+                document.getElementById('filter-btn').addEventListener('click', function () {
+                    const filterContent = document.getElementById('filter-content');
+                    if (filterContent.style.display === 'block') {
+                        filterContent.style.display = 'none';
+                    } else {
+                        filterContent.style.display = 'block';
+                    }
+                });
+
+                document.getElementById('scroll-left').addEventListener('click', function() {
+                    document.getElementById('style-buttons').scrollBy({ left: -500, behavior: 'smooth' });
+                });
+
+                document.getElementById('scroll-right').addEventListener('click', function() {
+                    document.getElementById('style-buttons').scrollBy({ left: 500, behavior: 'smooth' });
+                });
+
+        
+                // Проверка позиции прокрутки сразу после загрузки страницы
+                const backToTopButton = document.getElementById('back-to-top');
+                function checkScrollPosition() {
+                    if (window.scrollY > 300) {
+                        backToTopButton.style.display = 'flex';
+                    } else {
+                        backToTopButton.style.display = 'none';
+                    }
+                }
+        
+                checkScrollPosition();  // Проверяем позицию при загрузке страницы
+        
+                // Показать кнопку при прокрутке вниз
+                window.addEventListener('scroll', function () {
+                    checkScrollPosition();
+                });
+        
+                // Прокрутка к началу страницы при клике
+                backToTopButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+        
+                // Очистка поля поиска
+                const searchInput = document.getElementById('search-input');
+                const clearBtn = document.getElementById('clear-btn');
+            
+                searchInput.addEventListener('input', () => {
+                    clearBtn.style.display = searchInput.value ? 'block' : 'none';
+                });
+            
+                clearBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    clearBtn.style.display = 'none';
+                    searchInput.focus();
+                });
+            });
+        </script>        
+    </body>
+</html>

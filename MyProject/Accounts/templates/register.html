@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="art, artspace">
+        <meta name="descripton" content="Place for new art">
+        <title>ArtSpace Register</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    </head>
+
+    <body>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div>
+                <label for="avatar">Загрузить аватар:</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(event)">
+                <img id="avatar-preview" style="max-width: 100%;" />
+            </div>
+            <button type="submit">Зарегистрироваться</button>
+        </form> 
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+        <script>
+            let cropper;
+            const previewAvatar = (event) => {
+                const image = document.getElementById('avatar-preview');
+                image.src = URL.createObjectURL(event.target.files[0]);
+                if (cropper) {
+                    cropper.destroy();
+                }
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,  // Соотношение сторон 1:1 для аватара
+                    viewMode: 1
+                });
+            };
+
+            document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const avatarFile = document.getElementById('avatar').files[0];
+
+            formData.append('avatar', avatarFile);
+
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                formData.append('avatar_thumbnail', blob, 'avatar_thumbnail.jpg');
+                formData.append('username', document.querySelector('[name="username"]').value);
+                formData.append('job', document.querySelector('[name="job"]').value);
+                formData.append('password', document.querySelector('[name="password"]').value);
+                formData.append('confirm_password', document.querySelector('[name="confirm_password"]').value);
+
+                fetch('{% url "register" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "{% url 'register' %}";
+                    } else {
+                        return response.json().then(data => {
+                            console.error("Ошибка:", data);
+                            alert("Ошибка регистрации: " + data.detail || "Попробуйте снова.");
+                        });
+                    }
+                }).catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("Произошла ошибка при отправке формы.");
+                });
+            });
+        });
+        </script>
+    </body>
+</html>
